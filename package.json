@@ -1,0 +1,55 @@
+{
+  "name": "localai-desktop",
+  "version": "1.0.0",
+  "description": "Local AI chat desktop app — Ollama + Open WebUI",
+  "main": "./out/main/index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "electron-vite dev",
+    "build": "electron-vite build",
+    "preview": "electron-vite preview",
+    "prepare-icon": "mkdir -p build && qlmanage -t -s 1024 -o build resources/icon.svg >/dev/null 2>&1 && cp -f build/icon.svg.png build/icon.png",
+    "package": "npm run build && npm run prepare-icon && electron-builder --mac",
+    "cli:init": "tsx src/main/cli.ts init",
+    "cli:start": "tsx src/main/cli.ts start",
+    "cli:stop": "tsx src/main/cli.ts stop",
+    "cli:status": "tsx src/main/cli.ts status"
+  },
+  "dependencies": {
+    "@electron-toolkit/utils": "^3.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.3",
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8",
+    "electron-vite": "^2.3.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "tsx": "^4.19.2",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.11"
+  },
+  "build": {
+    "appId": "com.localai.desktop",
+    "productName": "LocalAI",
+    "mac": {
+      "category": "public.app-category.productivity",
+      "icon": "build/icon.png",
+      "target": ["dmg", "dir"]
+    },
+    "directories": {
+      "output": "release"
+    },
+    "extraResources": [
+      {
+        "from": "resources/docker-compose.template.yml",
+        "to": "docker-compose.template.yml"
+      }
+    ],
+    "files": [
+      "out/**/*"
+    ]
+  }
+}
