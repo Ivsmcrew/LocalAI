@@ -2,11 +2,16 @@ import { resolve } from 'path'
 import { defineConfig, externalizeDepsPlugin } from 'electron-vite'
 import react from '@vitejs/plugin-react'
 
+/** Элиасы для импортов в проекте */
 const sharedAlias = {
+  '@main': resolve(__dirname, 'src/main'),
+  '@preload': resolve(__dirname, 'src/preload'),
+  '@renderer': resolve(__dirname, 'src/renderer'),
   '@shared': resolve(__dirname, 'src/shared'),
 }
 
 export default defineConfig({
+  /** Main process — backend приложения: оркестрация сервисов */
   main: {
     resolve: { alias: sharedAlias },
     plugins: [externalizeDepsPlugin()],
@@ -18,6 +23,7 @@ export default defineConfig({
       },
     },
   },
+  /** Preload process — contextBridge, безопасный API для UI */
   preload: {
     resolve: { alias: sharedAlias },
     plugins: [externalizeDepsPlugin()],
@@ -29,6 +35,7 @@ export default defineConfig({
       },
     },
   },
+  /** Renderer process — frontend приложения: UI */
   renderer: {
     resolve: { alias: sharedAlias },
     root: resolve(__dirname, 'src/renderer'),

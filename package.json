@@ -2,14 +2,20 @@
   "name": "localai-desktop",
   "version": "1.0.0",
   "description": "Local AI chat desktop app — Ollama + Open WebUI",
-  "main": "./out/main/index.js",
+  "main": "./out/main/index.js", 
   "type": "module",
+  "author": {
+    "name": "ivsmcrew",
+    "email": "ivsmcrew@gmail.com",
+    "url": "https://github.com/ivsmcrew"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/ivsmcrew/LocalAI",
   "scripts": {
     "dev": "electron-vite dev",
     "build": "electron-vite build",
     "preview": "electron-vite preview",
-    "prepare-icon": "mkdir -p build && qlmanage -t -s 1024 -o build resources/icon.svg >/dev/null 2>&1 && cp -f build/icon.svg.png build/icon.png",
-    "package": "npm run build && npm run prepare-icon && electron-builder --mac",
+    "package": "npm run build && electron-builder --mac",
     "cli:init": "tsx src/main/cli.ts init",
     "cli:start": "tsx src/main/cli.ts start",
     "cli:stop": "tsx src/main/cli.ts stop",
@@ -36,7 +42,7 @@
     "productName": "LocalAI",
     "mac": {
       "category": "public.app-category.productivity",
-      "icon": "build/icon.png",
+      "icon": "resources/icon.png",
       "target": ["dmg", "dir"]
     },
     "directories": {

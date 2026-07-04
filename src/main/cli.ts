@@ -13,6 +13,7 @@ const command = process.argv[2]
 
 async function main(): Promise<void> {
   switch (command) {
+    // Первичная настройка: создание шаблона docker-compose, загрузка модели Ollama, запуск WebUI
     case 'init': {
       const model = process.argv[3] ?? 'llama3.2'
       manager.onInitProgress((p) =>
@@ -21,13 +22,16 @@ async function main(): Promise<void> {
       await manager.initialize({ defaultModel: model, composeTemplatePath: composeTemplate })
       break
     }
+    // Запуск стека: запуск контейнеров docker, запуск WebUI
     case 'start':
       await manager.start()
       console.log('Stack started. Open http://localhost:3000 in your browser.')
       break
+    // Остановка стека: остановка контейнеров docker, остановка WebUI
     case 'stop':
       await manager.stop()
       break
+    // Статус стека: проверка статуса контейнеров docker, проверка статуса WebUI
     case 'status': {
       const status = await manager.getStatus()
       console.log(JSON.stringify(status, null, 2))

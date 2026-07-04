@@ -1,23 +1,33 @@
 # LocalAI Desktop
 
+
 Electron desktop app for managing a local AI chat stack (native Ollama + Open WebUI in Docker).
 
-## Prerequisites
+---
 
+### Prerequisites for user
 - macOS
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/)
 - [Ollama](https://ollama.com/download) (native macOS app)
-- Node.js 18+
+---
 
-## Development
+### Prerquisites for dev
+- Prerequisites for user
+- Node.js 18+
+---
+
+### Development
+Dev mode with hot-reload
 
 ```bash
 cd localai-desktop
 npm install
 npm run dev
 ```
+---
 
-## CLI (without Electron UI)
+### CLI (work without Electron UI)
+Working with services stack without UI
 
 ```bash
 npm run cli:init llama3.2
@@ -25,19 +35,100 @@ npm run cli:start
 npm run cli:status
 npm run cli:stop
 ```
+---
 
-## Build
+### Build
 
 ```bash
 npm run build
 npm run preview
 ```
+---
 
-## Usage
+### Usage
 
-1. **First launch** — Init wizard downloads Open WebUI and an Ollama model.
+1. **First launch** — Checks Docker, Ollama, ports, and disk space. Pulls and starts the WebUI Docker container. Starts Ollama. Downloads the model. Verifies everything works. Stops the stack.
 2. **Start** — launches Docker container + Ollama, opens chat window.
 3. **Stop** — stops container and Ollama (Docker Desktop keeps running).
 4. **Open Chat** — reopens the chat window if stack is running.
+---
 
-Config is stored in `~/Library/Application Support/LocalAI/`.
+### Project configuration
+
+1. `tsconfig.node.json` — config for build tooling and `electron.vite.config.ts`.
+
+```json
+{
+  "compilerOptions": {
+    "composite": true, // lets tsconfig.json reference this config
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo", // stores the type-check cache there
+    "module": "ESNext", // module format for import/export (ESM)
+    "moduleResolution": "bundler", // with module: ESNext, resolves modules and relaxes ESM strictness
+    "allowSyntheticDefaultImports": true, // relaxes strictness for default imports
+    "strict": true, // strict type checking
+    "skipLibCheck": true, // skips type checking inside .d.ts in node_modules
+    "noEmit": true // does not compile JS files; only type-checks source files
+  },
+  "include": ["electron.vite.config.ts"] // applies only to this file
+}
+```
+
+2. `tsconfig.app.json` — config for all application code in `src/` (main, preload, renderer).
+
+```json
+{
+  "compilerOptions": {
+    "composite": true, // lets tsconfig.json reference this config
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo", // stores the type-check cache there
+    "target": "ESNext", // target JS version for compilation
+    "module": "ESNext", // module format for import/export (ESM)
+    "moduleResolution": "bundler", // with module: ESNext, resolves modules and relaxes ESM strictness
+    "strict": true, // strict type checking
+    "skipLibCheck": true, // skips type checking inside .d.ts in node_modules
+    "esModuleInterop": true, // simplifies importing CommonJS modules via ESM syntax
+    "resolveJsonModule": true, // enables typed imports of JSON files
+    "isolatedModules": true, // each file can be transpiled in isolation without analyzing the whole project
+    "noEmit": true, // does not compile JS files; only type-checks source files
+    "jsx": "react-jsx", // for checking TSX files
+    "paths": {
+      "@shared/*": ["./src/shared/*"] // import aliases for TS (must also be duplicated in electron.vite.config.ts for the bundler)
+    }
+  },
+  "include": ["src/**/*"] // applies to these files
+}
+
+```
+
+3. `package.json`
+```json
+{
+  "main": "./out/main/index.js", // Electron entry point
+  "type": "module", // all JS files are modules
+  "license": "MIT", // license type; indicates a LICENSE file is required
+  "scripts": {
+    "dev": "electron-vite dev", // hot-reload, no .app packaging
+    "build": "electron-vite build", // build to out/
+    "preview": "electron-vite preview", // preview the out/ build
+    "package": "npm run build && electron-builder --mac", // build + .app
+    "cli:init": "tsx src/main/cli.ts init", // Initial setup: create docker-compose template, pull Ollama model, start WebUI
+    "cli:start": "tsx src/main/cli.ts start", // Start stack: run Docker containers, start WebUI
+    "cli:stop": "tsx src/main/cli.ts stop", // Stop stack: stop Docker containers, stop WebUI
+    "cli:status": "tsx src/main/cli.ts status" // Stack status: check Docker container and WebUI status
+  },
+  "build": {
+    // electron-builder config: packages ./out into a .app (output in release/)
+  }
+}
+```
+
+4. `electron.vite.config.ts` — build configuration for the entire Electron app. Read by electron-vite during `npm run dev`, `build`, and `preview`. This config describes all three parts of the project, each in its own environment (main — Node.js in Electron, renderer — React in Chromium, preload — window preload script). This config runs under the system Node.js (on the developer machine).
+```ts
+const sharedAlias // Import aliases in the project
+```
+
+### Project layout
+
+- `resources/` — static assets bundled with the app (`docker-compose.template.yml`, `icon.svg` source, `icon.png` for macOS packaging)
+- `out/` — compiled JS from `npm run build` (electron-vite)
+- `release/` — packaged `.app` / `.dmg` from `npm run package` (electron-builder)
+- `src/` — application source code
