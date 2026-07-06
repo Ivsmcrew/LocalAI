@@ -1,10 +1,17 @@
-import { mkdir, readFile, writeFile, copyFile, access } from 'fs/promises'
+import { mkdir, readFile, writeFile, access } from 'fs/promises'
 import { join } from 'path'
 import { constants } from 'fs'
 import { homedir } from 'os'
 import type { AppConfig } from '../../shared/types'
+import {
+  APP_NAME,
+  CONTAINER_NAME,
+  DOCKER_IMAGE,
+  OLLAMA_PORT,
+  WEBUI_PORT,
+} from '../../shared/env'
 
-const CONFIG_DIR = join(homedir(), 'Library', 'Application Support', 'LocalAI')
+const CONFIG_DIR = join(homedir(), 'Library', 'Application Support', APP_NAME)
 const CONFIG_FILE = join(CONFIG_DIR, 'config.json')
 const COMPOSE_FILE = join(CONFIG_DIR, 'docker-compose.yml')
 
@@ -37,7 +44,13 @@ export class ConfigService {
 
   async setupComposeFile(templatePath: string): Promise<string> {
     await this.ensureUserDataDir()
-    await copyFile(templatePath, COMPOSE_FILE)
+    const template = await readFile(templatePath, 'utf-8')
+    const compose = template
+      .replaceAll('{{CONTAINER_NAME}}', CONTAINER_NAME)
+      .replaceAll('{{DOCKER_IMAGE}}', DOCKER_IMAGE)
+      .replaceAll('{{WEBUI_PORT}}', String(WEBUI_PORT))
+      .replaceAll('{{OLLAMA_PORT}}', String(OLLAMA_PORT))
+    await writeFile(COMPOSE_FILE, compose, 'utf-8')
     return COMPOSE_FILE
   }
 

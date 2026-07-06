@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { DEFAULT_MODELS, type InitProgress } from '../../shared/types'
+import { APP_NAME, DEFAULT_MODEL, DEFAULT_MODELS } from '../../shared/env'
+import type { InitProgress } from '../../shared/types'
 import styles from './InitWizard.module.css'
 
 const STEPS = [
@@ -30,7 +31,7 @@ export function InitWizard({ loading, error, initProgress, onInitialize }: Props
 
   return (
     <div className={styles.container}>
-      <h2 className={styles.title}>Welcome to LocalAI</h2>
+      <h2 className={styles.title}>Welcome to {APP_NAME}</h2>
       <p className={styles.subtitle}>
         First-time setup will download Open WebUI and an Ollama model. This may take several
         minutes.
@@ -92,7 +93,7 @@ export function InitWizard({ loading, error, initProgress, onInitialize }: Props
             <input
               className={styles.customInput}
               type="text"
-              placeholder="e.g. llama3.2"
+              placeholder={`e.g. ${DEFAULT_MODEL}`}
               value={customModel}
               onChange={(e) => setCustomModel(e.target.value)}
             />

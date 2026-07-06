@@ -26,17 +26,6 @@ npm run dev
 ```
 ---
 
-### CLI (work without Electron UI)
-Working with services stack without UI
-
-```bash
-npm run cli:init llama3.2
-npm run cli:start
-npm run cli:status
-npm run cli:stop
-```
----
-
 ### Build
 
 ```bash
@@ -109,17 +98,12 @@ npm run preview
     "dev": "electron-vite dev", // hot-reload, no .app packaging
     "build": "electron-vite build", // build to out/
     "preview": "electron-vite preview", // preview the out/ build
-    "package": "npm run build && electron-builder --mac", // build + .app
-    "cli:init": "tsx src/main/cli.ts init", // Initial setup: create docker-compose template, pull Ollama model, start WebUI
-    "cli:start": "tsx src/main/cli.ts start", // Start stack: run Docker containers, start WebUI
-    "cli:stop": "tsx src/main/cli.ts stop", // Stop stack: stop Docker containers, stop WebUI
-    "cli:status": "tsx src/main/cli.ts status" // Stack status: check Docker container and WebUI status
-  },
-  "build": {
-    // electron-builder config: packages ./out into a .app (output in release/)
+    "package": "npm run build && electron-builder --mac --config electron-builder.config.cjs" // build + .app
   }
 }
 ```
+
+`electron-builder.config.cjs` — packaging config (appId, productName from `.env`).
 
 4. `electron.vite.config.ts` — build configuration for the entire Electron app. Read by electron-vite during `npm run dev`, `build`, and `preview`. This config describes all three parts of the project, each in its own environment (main — Node.js in Electron, renderer — React in Chromium, preload — window preload script). This config runs under the system Node.js (on the developer machine).
 ```ts

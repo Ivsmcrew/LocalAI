@@ -2,7 +2,7 @@
   "name": "localai-desktop",
   "version": "1.0.0",
   "description": "Local AI chat desktop app — Ollama + Open WebUI",
-  "main": "./out/main/index.js", 
+  "main": "./out/main/index.js",
   "type": "module",
   "author": {
     "name": "ivsmcrew",
@@ -15,11 +15,7 @@
     "dev": "electron-vite dev",
     "build": "electron-vite build",
     "preview": "electron-vite preview",
-    "package": "npm run build && electron-builder --mac",
-    "cli:init": "tsx src/main/cli.ts init",
-    "cli:start": "tsx src/main/cli.ts start",
-    "cli:stop": "tsx src/main/cli.ts stop",
-    "cli:status": "tsx src/main/cli.ts status"
+    "package": "npm run build && electron-builder --mac --config electron-builder.config.cjs"
   },
   "dependencies": {
     "@electron-toolkit/utils": "^3.0.0"
@@ -33,29 +29,7 @@
     "electron-vite": "^2.3.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "tsx": "^4.19.2",
     "typescript": "^5.6.3",
     "vite": "^5.4.11"
-  },
-  "build": {
-    "appId": "com.localai.desktop",
-    "productName": "LocalAI",
-    "mac": {
-      "category": "public.app-category.productivity",
-      "icon": "resources/icon.png",
-      "target": ["dmg", "dir"]
-    },
-    "directories": {
-      "output": "release"
-    },
-    "extraResources": [
-      {
-        "from": "resources/docker-compose.template.yml",
-        "to": "docker-compose.template.yml"
-      }
-    ],
-    "files": [
-      "out/**/*"
-    ]
   }
 }

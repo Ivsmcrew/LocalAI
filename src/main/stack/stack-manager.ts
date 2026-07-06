@@ -1,4 +1,5 @@
 import type { InitProgress, StackStatus } from '../../shared/types'
+import { CONTAINER_NAME } from '../../shared/env'
 
 import { ConfigService } from '../services/config'
 import { DockerService } from '../services/docker'
@@ -41,7 +42,7 @@ export class StackManager {
       this.deps.docker.isRunning(),
       this.deps.ollama.isReady(),
       this.deps.webui.isReady(),
-      this.deps.docker.isContainerRunning('open-webui'),
+      this.deps.docker.isContainerRunning(CONTAINER_NAME),
     ])
 
     return buildStackStatus({

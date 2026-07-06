@@ -1,5 +1,6 @@
 // Сборка объекта StackStatus из флагов готовности сервисов (чистая функция).
 import type { AppConfig, StackStatus } from '../../shared/types'
+import { WEBUI_PORT } from '../../shared/env'
 
 export interface StackStatusInput {
   cfg: AppConfig | null
@@ -30,7 +31,7 @@ export function buildStackStatus(input: StackStatusInput): StackStatus {
     },
     webui: {
       state: webuiReady && containerRunning ? 'ready' : containerRunning ? 'starting' : 'idle',
-      message: webuiReady ? 'Ready on :3000' : containerRunning ? 'Starting...' : 'Stopped',
+      message: webuiReady ? `Ready on :${WEBUI_PORT}` : containerRunning ? 'Starting...' : 'Stopped',
     },
   }
 }

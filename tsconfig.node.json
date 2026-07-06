@@ -9,5 +9,5 @@
     "skipLibCheck": true,
     "noEmit": true
   },
-  "include": ["electron.vite.config.ts"]
+  "include": ["electron.vite.config.ts", "env.build.d.ts"]
 }
