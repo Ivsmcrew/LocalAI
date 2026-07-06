@@ -1,7 +1,7 @@
 import { ipcMain, dialog, app, type BrowserWindow } from 'electron'
 import { join } from 'path'
 import { IPC } from '@shared/consts'
-import { APP_NAME } from '@shared/env'
+import { env } from '@shared/env'
 import { getStackManager } from './stack'
 import { closeChatWindow, getControlWindow, openChatWindow } from './windows'
 
@@ -66,7 +66,7 @@ export async function handleAppQuit(): Promise<boolean> {
     buttons: ['Stop stack and quit', 'Quit without stopping', 'Cancel'],
     defaultId: 0,
     cancelId: 2,
-    title: `Quit ${APP_NAME}`,
+    title: `Quit ${env.APP_NAME}`,
     message: 'The AI stack is still running.',
     detail: 'Do you want to stop Docker container and Ollama before quitting?',
   })

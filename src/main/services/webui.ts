@@ -1,4 +1,4 @@
-import { WEBUI_URL, REQUEST_TIMEOUT_MS } from '@shared/env'
+import { env, WEBUI_URL } from '@shared/env'
 
 export class WebUIService {
   private log: (line: string) => void
@@ -9,7 +9,7 @@ export class WebUIService {
 
   async isReady(): Promise<boolean> {
     try {
-      const res = await fetch(WEBUI_URL, { signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) })
+      const res = await fetch(WEBUI_URL, { signal: AbortSignal.timeout(env.REQUEST_TIMEOUT_MS) })
       return res.ok || res.status === 200
     } catch {
       return false

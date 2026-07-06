@@ -1,4 +1,4 @@
-export interface BuildEnv {
+export interface AppEnv {
   APP_ID: string
   APP_NAME: string
   SERVICE_HOST: string
@@ -9,5 +9,4 @@ export interface BuildEnv {
   DEFAULT_MODEL: string
   DEFAULT_MODELS: string[]
   REQUEST_TIMEOUT_MS: number
-  OPEN_DEVTOOLS: boolean
 }

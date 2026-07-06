@@ -2,7 +2,7 @@ import { execFile, spawn, type ChildProcess } from 'child_process'
 import { promisify } from 'util'
 import { access } from 'fs/promises'
 import { constants } from 'fs'
-import { CONTAINER_NAME } from '@shared/env'
+import { env } from '@shared/env'
 
 const execFileAsync = promisify(execFile)
 
@@ -88,7 +88,7 @@ export class DockerService {
     await this.run(['compose', 'pull'], cwd)
   }
 
-  async composeUp(cwd: string, containerName = CONTAINER_NAME): Promise<void> {
+  async composeUp(cwd: string, containerName = env.CONTAINER_NAME): Promise<void> {
     if (await this.isContainerRunning(containerName, false)) {
       this.log(`Container ${containerName} is already running`)
       return

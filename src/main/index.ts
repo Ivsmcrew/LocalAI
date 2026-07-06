@@ -1,4 +1,4 @@
-import { APP_ID } from '@shared/env'
+import { env } from '@shared/env'
 import { app, BrowserWindow } from 'electron'
 import { electronApp, optimizer } from '@electron-toolkit/utils'
 import { createControlWindow } from './windows'
@@ -10,7 +10,7 @@ import {
 
 /** Запуск приложения */
 app.whenReady().then(() => {
-  electronApp.setAppUserModelId(APP_ID)
+  electronApp.setAppUserModelId(env.APP_ID)
 
   /** Включение горячих клавиш по типу F12 */
   app.on('browser-window-created', (_, window) => {

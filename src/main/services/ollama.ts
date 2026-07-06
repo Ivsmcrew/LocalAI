@@ -2,7 +2,7 @@ import { execFile } from 'child_process'
 import { promisify } from 'util'
 import { access } from 'fs/promises'
 import { constants } from 'fs'
-import { OLLAMA_TAGS_URL, REQUEST_TIMEOUT_MS } from '@shared/env'
+import { env, OLLAMA_TAGS_URL } from '@shared/env'
 
 const execFileAsync = promisify(execFile)
 
@@ -44,7 +44,7 @@ export class OllamaService {
 
   async isReady(): Promise<boolean> {
     try {
-      const res = await fetch(OLLAMA_TAGS_URL, { signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) })
+      const res = await fetch(OLLAMA_TAGS_URL, { signal: AbortSignal.timeout(env.REQUEST_TIMEOUT_MS) })
       return res.ok
     } catch {
       return false

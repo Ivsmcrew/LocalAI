@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { APP_NAME, DEFAULT_MODEL, DEFAULT_MODELS } from '@shared/env'
+import { env } from '@shared/env'
 import type { InitProgress } from '@shared/types'
 import styles from './InitWizard.module.css'
 
@@ -20,7 +20,7 @@ interface Props {
 }
 
 export function InitWizard({ loading, error, initProgress, onInitialize }: Props) {
-  const [model, setModel] = useState<string>(DEFAULT_MODELS[0])
+  const [model, setModel] = useState<string>(env.DEFAULT_MODELS[0])
   const [customModel, setCustomModel] = useState('')
   const [useCustom, setUseCustom] = useState(false)
 
@@ -31,7 +31,7 @@ export function InitWizard({ loading, error, initProgress, onInitialize }: Props
 
   return (
     <div className={styles.container}>
-      <h2 className={styles.title}>Welcome to {APP_NAME}</h2>
+      <h2 className={styles.title}>Welcome to {env.APP_NAME}</h2>
       <p className={styles.subtitle}>
         First-time setup will download Open WebUI and an Ollama model. This may take several
         minutes.
@@ -64,7 +64,7 @@ export function InitWizard({ loading, error, initProgress, onInitialize }: Props
         <div className={styles.modelSelect}>
           <label className={styles.label}>Default model</label>
           <div className={styles.modelOptions}>
-            {DEFAULT_MODELS.map((m) => (
+            {env.DEFAULT_MODELS.map((m) => (
               <label key={m} className={styles.radioLabel}>
                 <input
                   type="radio"
@@ -93,7 +93,7 @@ export function InitWizard({ loading, error, initProgress, onInitialize }: Props
             <input
               className={styles.customInput}
               type="text"
-              placeholder={`e.g. ${DEFAULT_MODEL}`}
+              placeholder={`e.g. ${env.DEFAULT_MODEL}`}
               value={customModel}
               onChange={(e) => setCustomModel(e.target.value)}
             />

@@ -1,6 +1,6 @@
-const { loadBuildEnv } = require('./env.build.cjs')
+const { loadAppEnv } = require('./src/shared/env/load.cjs')
 
-const { APP_ID, APP_NAME } = loadBuildEnv('production')
+const { APP_ID, APP_NAME } = loadAppEnv()
 
 /** @type {import('electron-builder').Configuration} */
 module.exports = {

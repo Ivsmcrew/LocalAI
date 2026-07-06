@@ -70,6 +70,7 @@ web_modules/
 .yarn-integrity
 
 # Local overrides (secrets, personal settings) — never commit
+.env
 .env.local
 
 # parcel-bundler cache (https://parceljs.org/)

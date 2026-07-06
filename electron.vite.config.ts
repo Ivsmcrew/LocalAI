@@ -4,7 +4,7 @@ import { defineConfig, externalizeDepsPlugin } from 'electron-vite'
 import react from '@vitejs/plugin-react'
 
 const require = createRequire(import.meta.url)
-const { loadBuildEnv } = require('./env.build.cjs')
+const { loadAppEnv } = require('./src/shared/env/load.cjs')
 
 /** Элиасы для импортов в проекте */
 const sharedAlias = {
@@ -14,10 +14,9 @@ const sharedAlias = {
   '@shared': resolve(__dirname, 'src/shared'),
 }
 
-export default defineConfig(({ mode }) => {
-  /** Подстановка переменных из .env в код на этапе сборки в переменную __LOCALAI_ENV__ */
-  const define = {
-    __LOCALAI_ENV__: JSON.stringify(loadBuildEnv(mode)),
+export default defineConfig(() => {
+  const envDefine = {
+    __LOCALAI_ENV__: JSON.stringify(loadAppEnv()),
   }
 
   return {
@@ -25,7 +24,7 @@ export default defineConfig(({ mode }) => {
     main: {
       resolve: { alias: sharedAlias },
       plugins: [externalizeDepsPlugin()],
-      define,
+      define: envDefine,
       build: {
         rollupOptions: {
           input: {
@@ -38,7 +37,6 @@ export default defineConfig(({ mode }) => {
     preload: {
       resolve: { alias: sharedAlias },
       plugins: [externalizeDepsPlugin()],
-      define,
       build: {
         rollupOptions: {
           input: {
@@ -52,7 +50,7 @@ export default defineConfig(({ mode }) => {
       resolve: { alias: sharedAlias },
       root: resolve(__dirname, 'src/renderer'),
       base: './',
-      define,
+      define: envDefine,
       build: {
         modulePreload: false,
         rollupOptions: {

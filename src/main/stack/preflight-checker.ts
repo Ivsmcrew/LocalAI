@@ -2,7 +2,7 @@
 import { execFile } from 'child_process'
 import { promisify } from 'util'
 import { statfs } from 'fs/promises'
-import { OLLAMA_PORT, WEBUI_PORT } from '@shared/env'
+import { env } from '@shared/env'
 import type { ProgressEmitter, StackDeps } from './types'
 
 const execFileAsync = promisify(execFile)
@@ -27,8 +27,8 @@ export class PreflightChecker {
       throw new Error('Ollama is not installed. Download it from https://ollama.com/download')
     }
 
-    await this.checkPortFree(WEBUI_PORT, 'Open WebUI')
-    await this.checkPortFree(OLLAMA_PORT, 'Ollama')
+    await this.checkPortFree(env.WEBUI_PORT, 'Open WebUI')
+    await this.checkPortFree(env.OLLAMA_PORT, 'Ollama')
 
     try {
       const stats = await statfs('/')

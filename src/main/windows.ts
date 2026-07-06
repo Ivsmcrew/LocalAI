@@ -2,7 +2,7 @@ import { BrowserWindow, shell } from 'electron'
 import { is } from '@electron-toolkit/utils'
 import { join } from 'path'
 import { existsSync } from 'fs'
-import { APP_NAME, openDevtools, WEBUI_URL } from '@shared/env'
+import { env, WEBUI_URL } from '@shared/env'
 
 let controlWindow: BrowserWindow | null = null
 let chatWindow: BrowserWindow | null = null
@@ -25,7 +25,7 @@ export function createControlWindow(): BrowserWindow {
     height: 640,
     resizable: false,
     show: false,
-    title: APP_NAME,
+    title: env.APP_NAME,
     webPreferences: {
       preload: getPreloadPath(),
       contextIsolation: true,
@@ -44,9 +44,6 @@ export function createControlWindow(): BrowserWindow {
 
   controlWindow.once('ready-to-show', () => {
     controlWindow?.show()
-    if (openDevtools) {
-      controlWindow?.webContents.openDevTools()
-    }
   })
 
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
@@ -71,7 +68,7 @@ export function openChatWindow(): BrowserWindow {
   chatWindow = new BrowserWindow({
     width: 1200,
     height: 800,
-    title: `${APP_NAME} Chat`,
+    title: `${env.APP_NAME} Chat`,
     webPreferences: {
       contextIsolation: true,
       nodeIntegration: false,

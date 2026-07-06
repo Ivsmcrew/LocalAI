@@ -1,7 +1,7 @@
 import { ServiceStatus } from '../components/ServiceStatus'
 import { LogViewer } from '../components/LogViewer'
 import type { StackStatus } from '@shared/types'
-import { APP_NAME } from '@shared/env'
+import { env } from '@shared/env'
 import styles from './ControlPanel.module.css'
 
 interface Props {
@@ -28,7 +28,7 @@ export function ControlPanel({
   return (
     <div className={styles.container}>
       <header className={styles.header}>
-        <h1 className={styles.title}>{APP_NAME}</h1>
+        <h1 className={styles.title}>{env.APP_NAME}</h1>
         <span className={`${styles.badge} ${isRunning ? styles.badgeReady : styles.badgeIdle}`}>
           {isRunning ? 'Running' : 'Stopped'}
         </span>
