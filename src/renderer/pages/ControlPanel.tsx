@@ -1,7 +1,7 @@
-import { ServiceStatus } from './ServiceStatus'
-import { LogViewer } from './LogViewer'
-import type { StackStatus } from '../../shared/types'
-import { APP_NAME } from '../../shared/env'
+import { ServiceStatus } from '../components/ServiceStatus'
+import { LogViewer } from '../components/LogViewer'
+import type { StackStatus } from '@shared/types'
+import { APP_NAME } from '@shared/env'
 import styles from './ControlPanel.module.css'
 
 interface Props {

@@ -1,5 +1,5 @@
 // Общие типы для коллабораторов стека (зависимости, опции init, эмиттер прогресса).
-import type { InitProgress } from '../../shared/types'
+import type { InitProgress } from '@shared/types'
 import type { ConfigService } from '../services/config'
 import type { DockerService } from '../services/docker'
 import type { OllamaService } from '../services/ollama'

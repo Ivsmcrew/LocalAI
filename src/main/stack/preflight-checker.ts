@@ -2,7 +2,7 @@
 import { execFile } from 'child_process'
 import { promisify } from 'util'
 import { statfs } from 'fs/promises'
-import { OLLAMA_PORT, WEBUI_PORT } from '../../shared/env'
+import { OLLAMA_PORT, WEBUI_PORT } from '@shared/env'
 import type { ProgressEmitter, StackDeps } from './types'
 
 const execFileAsync = promisify(execFile)

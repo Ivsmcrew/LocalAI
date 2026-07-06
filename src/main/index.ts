@@ -1,4 +1,4 @@
-import { APP_ID } from '../shared/env'
+import { APP_ID } from '@shared/env'
 import { app, BrowserWindow } from 'electron'
 import { electronApp, optimizer } from '@electron-toolkit/utils'
 import { createControlWindow } from './windows'

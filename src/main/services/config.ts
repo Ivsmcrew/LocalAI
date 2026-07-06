@@ -2,14 +2,14 @@ import { mkdir, readFile, writeFile, access } from 'fs/promises'
 import { join } from 'path'
 import { constants } from 'fs'
 import { homedir } from 'os'
-import type { AppConfig } from '../../shared/types'
+import type { AppConfig } from '@shared/types'
 import {
   APP_NAME,
   CONTAINER_NAME,
   DOCKER_IMAGE,
   OLLAMA_PORT,
   WEBUI_PORT,
-} from '../../shared/env'
+} from '@shared/env'
 
 const CONFIG_DIR = join(homedir(), 'Library', 'Application Support', APP_NAME)
 const CONFIG_FILE = join(CONFIG_DIR, 'config.json')

@@ -1,4 +1,4 @@
-import { WEBUI_URL, REQUEST_TIMEOUT_MS } from '../../shared/env'
+import { WEBUI_URL, REQUEST_TIMEOUT_MS } from '@shared/env'
 
 export class WebUIService {
   private log: (line: string) => void

@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { APP_NAME, DEFAULT_MODEL, DEFAULT_MODELS } from '../../shared/env'
-import type { InitProgress } from '../../shared/types'
+import { APP_NAME, DEFAULT_MODEL, DEFAULT_MODELS } from '@shared/env'
+import type { InitProgress } from '@shared/types'
 import styles from './InitWizard.module.css'
 
 const STEPS = [

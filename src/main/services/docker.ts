@@ -2,7 +2,7 @@ import { execFile, spawn, type ChildProcess } from 'child_process'
 import { promisify } from 'util'
 import { access } from 'fs/promises'
 import { constants } from 'fs'
-import { CONTAINER_NAME } from '../../shared/env'
+import { CONTAINER_NAME } from '@shared/env'
 
 const execFileAsync = promisify(execFile)
 

@@ -1,6 +1,6 @@
 // Сборка объекта StackStatus из флагов готовности сервисов (чистая функция).
-import type { AppConfig, StackStatus } from '../../shared/types'
-import { WEBUI_PORT } from '../../shared/env'
+import type { AppConfig, StackStatus } from '@shared/types'
+import { WEBUI_PORT } from '@shared/env'
 
 export interface StackStatusInput {
   cfg: AppConfig | null

@@ -1,5 +1,5 @@
-import type { InitProgress, StackStatus } from '../../shared/types'
-import { CONTAINER_NAME } from '../../shared/env'
+import type { InitProgress, StackStatus } from '@shared/types'
+import { CONTAINER_NAME } from '@shared/env'
 
 import { ConfigService } from '../services/config'
 import { DockerService } from '../services/docker'

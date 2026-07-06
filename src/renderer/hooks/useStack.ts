@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import type { InitProgress, StackStatus } from '../../shared/types'
+import type { InitProgress, StackStatus } from '@shared/types'
 
 export function useStack() {
   const [status, setStatus] = useState<StackStatus | null>(null)

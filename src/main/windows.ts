@@ -2,7 +2,7 @@ import { BrowserWindow, shell } from 'electron'
 import { is } from '@electron-toolkit/utils'
 import { join } from 'path'
 import { existsSync } from 'fs'
-import { APP_NAME, openDevtools, WEBUI_URL } from '../shared/env'
+import { APP_NAME, openDevtools, WEBUI_URL } from '@shared/env'
 
 let controlWindow: BrowserWindow | null = null
 let chatWindow: BrowserWindow | null = null

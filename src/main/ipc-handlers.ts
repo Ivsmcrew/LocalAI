@@ -1,7 +1,7 @@
 import { ipcMain, dialog, app, type BrowserWindow } from 'electron'
 import { join } from 'path'
-import { IPC } from '../shared/consts'
-import { APP_NAME } from '../shared/env'
+import { IPC } from '@shared/consts'
+import { APP_NAME } from '@shared/env'
 import { getStackManager } from './stack'
 import { closeChatWindow, getControlWindow, openChatWindow } from './windows'
 

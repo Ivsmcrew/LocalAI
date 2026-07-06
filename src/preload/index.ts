@@ -1,6 +1,6 @@
 import { contextBridge, ipcRenderer } from 'electron'
-import { IPC } from '../shared/consts'
-import type { InitProgress, StackStatus } from '../shared/types'
+import { IPC } from '@shared/consts'
+import type { InitProgress, StackStatus } from '@shared/types'
 
 export interface LocalAIApi {
   initialize: (defaultModel: string) => Promise<void>

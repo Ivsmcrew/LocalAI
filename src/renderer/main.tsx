@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import { APP_NAME } from '../shared/env'
+import { APP_NAME } from '@shared/env'
 import App from './App'
 import './index.css'
 

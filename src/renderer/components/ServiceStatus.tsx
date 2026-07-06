@@ -1,4 +1,4 @@
-import type { ServiceStatus as ServiceStatusType } from '../../shared/types'
+import type { ServiceStatus as ServiceStatusType } from '@shared/types'
 import styles from './ServiceStatus.module.css'
 
 const STATE_LABELS: Record<string, string> = {

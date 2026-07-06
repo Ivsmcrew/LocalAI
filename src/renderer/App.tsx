@@ -1,5 +1,5 @@
-import { ControlPanel } from './components/ControlPanel'
-import { InitWizard } from './components/InitWizard'
+import { ControlPanel } from './pages/ControlPanel'
+import { InitWizard } from './pages/InitWizard'
 import { useStack } from './hooks/useStack'
 import styles from './App.module.css'
 

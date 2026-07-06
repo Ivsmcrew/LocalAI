@@ -1,5 +1,5 @@
 // Подписки и рассылка логов и прогресса инициализации в UI.
-import type { InitProgress } from '../../shared/types'
+import type { InitProgress } from '@shared/types'
 
 export class StackEvents {
   private logListeners: Array<(line: string) => void> = []

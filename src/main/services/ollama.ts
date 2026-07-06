@@ -2,7 +2,7 @@ import { execFile } from 'child_process'
 import { promisify } from 'util'
 import { access } from 'fs/promises'
 import { constants } from 'fs'
-import { OLLAMA_TAGS_URL, REQUEST_TIMEOUT_MS } from '../../shared/env'
+import { OLLAMA_TAGS_URL, REQUEST_TIMEOUT_MS } from '@shared/env'
 
 const execFileAsync = promisify(execFile)
 
