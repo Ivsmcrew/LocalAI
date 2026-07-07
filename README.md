@@ -1,22 +1,32 @@
 # LocalAI Desktop
 
-
 Electron desktop app for managing a local AI chat stack (native Ollama + Open WebUI in Docker).
 
 ---
 
+
+
 ### Prerequisites for user
+
 - macOS
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/)
 - [Ollama](https://ollama.com/download) (native macOS app)
+
 ---
+
+
 
 ### Prerquisites for dev
+
 - Prerequisites for user
 - Node.js 18+
+
 ---
 
+
+
 ### Development
+
 Dev mode with hot-reload
 
 ```bash
@@ -25,7 +35,10 @@ npm install
 cp .env.example .env
 npm run dev
 ```
+
 ---
+
+
 
 ### Build
 
@@ -33,7 +46,10 @@ npm run dev
 npm run build
 npm run preview
 ```
+
 ---
+
+
 
 ### Usage
 
@@ -41,7 +57,10 @@ npm run preview
 2. **Start** — launches Docker container + Ollama, opens chat window.
 3. **Stop** — stops container and Ollama (Docker Desktop keeps running).
 4. **Open Chat** — reopens the chat window if stack is running.
+
 ---
+
+
 
 ### Project configuration
 
@@ -63,7 +82,7 @@ npm run preview
 }
 ```
 
-2. `tsconfig.app.json` — config for all application code in `src/` (main, preload, renderer).
+1. `tsconfig.app.json` — config for all application code in `src/` (main, preload, renderer).
 
 ```json
 {
@@ -89,7 +108,8 @@ npm run preview
 
 ```
 
-3. `package.json`
+1. `package.json`
+
 ```json
 {
   "main": "./out/main/index.js", // Electron entry point
@@ -99,12 +119,16 @@ npm run preview
     "dev": "electron-vite dev", // hot-reload, no .app packaging
     "build": "electron-vite build", // build to out/
     "preview": "electron-vite preview", // preview the out/ build
-    "package": "npm run build && electron-builder --mac --config electron-builder.config.cjs" // build + .app
+    "package": "npm run build && electron-builder --mac --config electron-builder.config.ts" // build + .app
   }
 }
 ```
 
-`electron-builder.config.cjs` — packaging config (appId, productName from `.env` via `loadAppEnv`).
+`electron-builder.config.ts` — packaging config (appId, productName from `.env` via `loadAppEnv`).
+
+---
+
+
 
 ### Environment variables
 
@@ -114,23 +138,23 @@ Copy `.env.example` to `.env` before development:
 cp .env.example .env
 ```
 
-- **`.env`** — values for app/stack defaults (not read at runtime in packaged `.app`)
-- **`src/shared/env/schema.cjs`** — field definitions: type, optional `envKey`
-- **`src/shared/env/load.cjs`** — generic parser driven by schema (used by build scripts)
-- **`src/shared/env/index.ts`** — `import { env } from '@shared/env'` in main and renderer
+- `.env` — values for app/stack defaults (not read at runtime in packaged `.app`)
+- `src/shared/env/schema.ts` — field definitions: type, and the single source of truth for the `AppEnv` type (derived from the schema)
+- `src/shared/env/load.ts` — generic parser driven by schema (used by build scripts; fails fast with a clear message if `.env` is missing or a required variable is absent)
+- `src/shared/env/index.ts` — `import { env } from '@shared/env'` in main and renderer
 
 Values are baked into the bundle at `npm run dev` / `npm run build`. User-specific settings (e.g. chosen model) live in `~/Library/Application Support/LocalAI/config.json`.
 
 **Adding a new variable:**
 
 1. Add to `.env` and `.env.example`
-2. Add one line to `schema.cjs` (`type`, optional `envKey`)
-3. Add field to `AppEnv` in `types.ts`
+2. Add one line to `schema.ts` (`type: 'string' | 'number' | 'csv'`)
 
-4. `electron.vite.config.ts` — build configuration for the entire Electron app. Read by electron-vite during `npm run dev`, `build`, and `preview`. This config describes all three parts of the project, each in its own environment (main — Node.js in Electron, renderer — React in Chromium, preload — window preload script). This config runs under the system Node.js (on the developer machine).
-```ts
-const sharedAlias // Import aliases in the project
-```
+The `AppEnv` TypeScript type is derived automatically from `schema.ts` — no need to maintain a separate types file.
+
+---
+
+
 
 ### Project layout
 
@@ -138,3 +162,4 @@ const sharedAlias // Import aliases in the project
 - `out/` — compiled JS from `npm run build` (electron-vite)
 - `release/` — packaged `.app` / `.dmg` from `npm run package` (electron-builder)
 - `src/` — application source code
+

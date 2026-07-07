@@ -1,13 +1,10 @@
 import { resolve } from 'path'
-import { createRequire } from 'module'
 import type { Plugin } from 'vite'
 import { defineConfig, externalizeDepsPlugin } from 'electron-vite'
 import react from '@vitejs/plugin-react'
+import { loadAppEnv } from './src/shared/env/load'
 
-const require = createRequire(import.meta.url)
-const { loadAppEnv } = require('./src/shared/env/load.cjs')
-
-/** Убирает crossorigin из index.html */
+/** Убирает crossorigin из index.html для обработки CORS */
 function removeCrossOriginPlugin(): Plugin {
   return {
     name: 'remove-crossorigin',
@@ -27,6 +24,7 @@ const sharedAlias = {
 }
 
 export default defineConfig(() => {
+  /** Создаем глобальную переменную __LOCALAI_ENV__ с переменными окружения для доступа в процессах */
   const envDefine = {
     __LOCALAI_ENV__: JSON.stringify(loadAppEnv()),
   }
@@ -49,6 +47,7 @@ export default defineConfig(() => {
     preload: {
       resolve: { alias: sharedAlias },
       plugins: [externalizeDepsPlugin()],
+      define: envDefine,
       build: {
         rollupOptions: {
           input: {

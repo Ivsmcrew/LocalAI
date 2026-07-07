@@ -1,24 +1,24 @@
-const { loadAppEnv } = require('./src/shared/env/load.cjs')
+import { loadAppEnv } from './src/shared/env/load'
 
 const { APP_ID, APP_NAME } = loadAppEnv()
 
-/** @type {import('electron-builder').Configuration} */
-module.exports = {
+/** Конфигурация сборки для Electron Builder */
+export default {
   appId: APP_ID,
   productName: APP_NAME,
   mac: {
     category: 'public.app-category.productivity',
     icon: 'resources/icon.png',
-    target: ['dmg', 'dir'],
+    target: ['dmg', 'dir']
   },
   directories: {
-    output: 'release',
+    output: 'release'
   },
   extraResources: [
     {
       from: 'resources/docker-compose.template.yml',
-      to: 'docker-compose.template.yml',
-    },
+      to: 'docker-compose.template.yml'
+    }
   ],
-  files: ['out/**/*'],
+  files: ['out/**/*']
 }

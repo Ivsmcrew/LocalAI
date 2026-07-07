@@ -14,7 +14,7 @@
     "dev": "ELECTRON_RUN_AS_NODE= electron-vite dev",
     "build": "electron-vite build",
     "preview": "ELECTRON_RUN_AS_NODE= electron-vite preview",
-    "package": "npm run build && electron-builder --mac --config electron-builder.config.cjs"
+    "package": "npm run build && electron-builder --mac --config electron-builder.config.ts"
   },
   "dependencies": {
     "@electron-toolkit/utils": "^3.0.0"
@@ -23,6 +23,7 @@
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^4.3.3",
+    "dotenv": "^17.4.2",
     "electron": "^33.2.0",
     "electron-builder": "^25.1.8",
     "electron-vite": "^2.3.0",

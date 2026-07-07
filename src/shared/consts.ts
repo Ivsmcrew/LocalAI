@@ -1,3 +1,6 @@
+/** 
+ * IPC каналы для взаимодействия между процессами
+ */
 export const IPC = {
   INIT: 'stack:init',
   START: 'stack:start',
