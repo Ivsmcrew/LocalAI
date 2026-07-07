@@ -1,10 +1,22 @@
 import { resolve } from 'path'
 import { createRequire } from 'module'
+import type { Plugin } from 'vite'
 import { defineConfig, externalizeDepsPlugin } from 'electron-vite'
 import react from '@vitejs/plugin-react'
 
 const require = createRequire(import.meta.url)
 const { loadAppEnv } = require('./src/shared/env/load.cjs')
+
+/** Убирает crossorigin из index.html */
+function removeCrossOriginPlugin(): Plugin {
+  return {
+    name: 'remove-crossorigin',
+    enforce: 'post',
+    transformIndexHtml(html) {
+      return html.replace(/ crossorigin/g, '')
+    },
+  }
+}
 
 /** Элиасы для импортов в проекте */
 const sharedAlias = {
@@ -59,7 +71,7 @@ export default defineConfig(() => {
           },
         },
       },
-      plugins: [react()],
+      plugins: [react(), removeCrossOriginPlugin()],
     },
   }
 })
