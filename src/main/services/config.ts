@@ -48,7 +48,7 @@ export class ConfigService {
     return COMPOSE_FILE
   }
 
-  async configExists(): Promise<boolean> {
+  async isConfigExists(): Promise<boolean> {
     try {
       await access(CONFIG_FILE, constants.F_OK)
       return true

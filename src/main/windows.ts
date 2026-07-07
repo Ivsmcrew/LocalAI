@@ -99,7 +99,3 @@ export function closeChatWindow(): void {
 export function getControlWindow(): BrowserWindow | null {
   return controlWindow
 }
-
-export function getChatWindow(): BrowserWindow | null {
-  return chatWindow
-}

@@ -2,7 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { env } from '@shared/env'
 import App from './App'
-import './index.css'
+import './normalize.css'
 
 document.title = env.APP_NAME
 
