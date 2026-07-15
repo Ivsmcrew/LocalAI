@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { env } from '@shared/env'
 import type { InitProgress } from '@shared/types'
-import styles from './InitWizard.module.css'
+import styles from './Onboarding.module.css'
 
 const STEPS = [
   { id: 'preflight', label: 'System check' },
@@ -16,10 +16,29 @@ interface Props {
   loading: boolean
   error: string | null
   initProgress: InitProgress | null
+  initComplete: boolean
+  opening: boolean
   onInitialize: (model: string) => void
+  onOpenLocalAI: () => void
 }
 
-export function InitWizard({ loading, error, initProgress, onInitialize }: Props) {
+function formatBytes(bytes: number): string {
+  if (bytes <= 0) return '0 B'
+  const units = ['B', 'KB', 'MB', 'GB', 'TB']
+  const i = Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), units.length - 1)
+  const value = bytes / 1024 ** i
+  return `${value < 10 && i > 0 ? value.toFixed(1) : Math.round(value)} ${units[i]}`
+}
+
+export function SetupStep({
+  loading,
+  error,
+  initProgress,
+  initComplete,
+  opening,
+  onInitialize,
+  onOpenLocalAI,
+}: Props) {
   const [model, setModel] = useState<string>(env.DEFAULT_MODELS[0])
   const [customModel, setCustomModel] = useState('')
   const [useCustom, setUseCustom] = useState(false)
@@ -29,38 +48,60 @@ export function InitWizard({ loading, error, initProgress, onInitialize }: Props
     ? STEPS.findIndex((s) => s.id === initProgress.step)
     : -1
 
+  const downloadPercent =
+    initProgress?.download && initProgress.download.total > 0
+      ? Math.round((initProgress.download.completed / initProgress.download.total) * 100)
+      : null
+
   return (
     <div className={styles.container}>
-      <h2 className={styles.title}>Welcome to {env.APP_NAME}</h2>
+      <h2 className={styles.title}>Set up {env.APP_NAME}</h2>
       <p className={styles.subtitle}>
-        First-time setup will download Open WebUI and an Ollama model. This may take several
-        minutes.
+        First-time setup will check your computer, download Open WebUI, and pull an Ollama model.
+        This may take several minutes.
       </p>
 
       <div className={styles.steps}>
         {STEPS.map((step, i) => {
-          const done = currentStepIndex > i
-          const active = currentStepIndex === i
+          const active = !initComplete && currentStepIndex === i
+          const stepDone = initComplete || currentStepIndex > i
           return (
             <div
               key={step.id}
-              className={`${styles.step} ${done ? styles.done : ''} ${active ? styles.active : ''}`}
+              className={`${styles.step} ${stepDone ? styles.done : ''} ${active ? styles.active : ''}`}
             >
-              <span className={styles.stepIcon}>{done ? '✓' : active ? '●' : '○'}</span>
+              <span className={styles.stepIcon}>{stepDone ? '✓' : active ? '●' : '○'}</span>
               <span>{step.label}</span>
             </div>
           )
         })}
       </div>
 
-      {initProgress && (
-        <div className={styles.progressBar}>
-          <div className={styles.progressFill} style={{ width: `${initProgress.percent}%` }} />
-          <span className={styles.progressText}>{initProgress.message}</span>
-        </div>
+      {initProgress && !initComplete && (
+        <>
+          <div className={styles.progressBar}>
+            <div className={styles.progressFill} style={{ width: `${initProgress.percent}%` }} />
+            <span className={styles.progressText}>{initProgress.message}</span>
+          </div>
+
+          {downloadPercent !== null && initProgress.download && (
+            <div className={styles.downloadProgress}>
+              <div className={styles.downloadHeader}>
+                <span>Model download</span>
+                <span>
+                  {formatBytes(initProgress.download.completed)} /{' '}
+                  {formatBytes(initProgress.download.total)} ({downloadPercent}%)
+                </span>
+              </div>
+              <div className={styles.downloadBar}>
+                <div className={styles.downloadFill} style={{ width: `${downloadPercent}%` }} />
+              </div>
+            </div>
+          )}
+        </>
       )}
 
-      {!loading && (
+      {!loading && !initComplete && (
         <div className={styles.modelSelect}>
           <label className={styles.label}>Default model</label>
           <div className={styles.modelOptions}>
@@ -131,13 +172,19 @@ export function InitWizard({ loading, error, initProgress, onInitialize }: Props
         </div>
       )}
 
-      <button
-        className={styles.primaryBtn}
-        disabled={loading || !selectedModel}
-        onClick={() => onInitialize(selectedModel)}
-      >
-        {loading ? 'Initializing...' : 'Start initialization'}
-      </button>
+      {initComplete ? (
+        <button className={styles.primaryBtn} disabled={opening} onClick={onOpenLocalAI}>
+          {opening ? 'Opening...' : `Open ${env.APP_NAME}`}
+        </button>
+      ) : (
+        <button
+          className={styles.primaryBtn}
+          disabled={loading || !selectedModel}
+          onClick={() => onInitialize(selectedModel)}
+        >
+          {loading ? 'Initializing...' : 'Start initialization'}
+        </button>
+      )}
     </div>
   )
 }

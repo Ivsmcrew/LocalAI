@@ -40,7 +40,16 @@ export class StackInitializer {
     await ollama.start()
     await ollama.waitForReady()
     this.events.emitProgress({ step: 'ollama', percent: 70, message: `Pulling model ${defaultModel}...` })
-    await ollama.pullModel(defaultModel)
+    await ollama.pullModel(defaultModel, (download) => {
+      const ratio = download.total > 0 ? download.completed / download.total : 0
+      const percent = Math.min(84, Math.round(70 + ratio * 14))
+      this.events.emitProgress({
+        step: 'ollama',
+        percent,
+        message: `Downloading ${defaultModel}… ${formatBytes(download.completed)} / ${formatBytes(download.total)}`,
+        download,
+      })
+    })
 
     // Step 5: Smoke test
     this.events.emitProgress({ step: 'smoke-test', percent: 85, message: 'Running smoke test...' })
@@ -61,6 +70,14 @@ export class StackInitializer {
       userDataPath: config.getUserDataPath(),
     })
     this.events.emitProgress({ step: 'finalize', percent: 100, message: 'Initialization complete!' })
-    this.events.emitLog('Init complete. Press Start to launch the chat.')
+    this.events.emitLog('Init complete. Open LocalAI to launch the app.')
   }
+}
+
+function formatBytes(bytes: number): string {
+  if (bytes <= 0) return '0 B'
+  const units = ['B', 'KB', 'MB', 'GB', 'TB']
+  const i = Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), units.length - 1)
+  const value = bytes / 1024 ** i
+  return `${value < 10 && i > 0 ? value.toFixed(1) : Math.round(value)} ${units[i]}`
 }

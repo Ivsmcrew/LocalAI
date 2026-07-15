@@ -7,7 +7,7 @@ export interface LocalAIApi {
   start: () => Promise<void>
   stop: () => Promise<void>
   getStatus: () => Promise<StackStatus>
-  openChat: () => Promise<void>
+  enterShell: () => Promise<void>
   onLog: (cb: (line: string) => void) => () => void
   onInitProgress: (cb: (progress: InitProgress) => void) => () => void
 }
@@ -17,7 +17,7 @@ const api: LocalAIApi = {
   start: () => ipcRenderer.invoke(IPC.START),
   stop: () => ipcRenderer.invoke(IPC.STOP),
   getStatus: () => ipcRenderer.invoke(IPC.STATUS),
-  openChat: () => ipcRenderer.invoke(IPC.OPEN_CHAT),
+  enterShell: () => ipcRenderer.invoke(IPC.ENTER_SHELL),
   onLog: (cb) => {
     const handler = (_: Electron.IpcRendererEvent, line: string) => cb(line)
     ipcRenderer.on(IPC.LOG, handler)

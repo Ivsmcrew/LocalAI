@@ -3,21 +3,21 @@ import { join } from 'path'
 import { IPC } from '@shared/ipc-channels'
 import { env } from '@shared/env'
 import { getStackManager } from './stack'
-import { closeChatWindow, getControlWindow, openChatWindow } from './windows'
+import { enterShellWindow, getMainWindow } from './windows'
 
 /** Регистрация IPC-хендлеров */
 export function registerIpcHandlers(composeTemplatePath: string): void {
   const manager = getStackManager()
 
   manager.onLog((line) => {
-    const win = getControlWindow()
+    const win = getMainWindow()
     if (win && !win.isDestroyed()) {
       win.webContents.send(IPC.LOG, line)
     }
   })
 
   manager.onInitProgress((progress) => {
-    const win = getControlWindow()
+    const win = getMainWindow()
     if (win && !win.isDestroyed()) {
       win.webContents.send(IPC.INIT_PROGRESS, progress)
     }
@@ -29,11 +29,9 @@ export function registerIpcHandlers(composeTemplatePath: string): void {
 
   ipcMain.handle(IPC.START, async () => {
     await manager.start()
-    openChatWindow()
   })
 
   ipcMain.handle(IPC.STOP, async () => {
-    closeChatWindow()
     await manager.stop()
   })
 
@@ -41,13 +39,8 @@ export function registerIpcHandlers(composeTemplatePath: string): void {
     return manager.getStatus()
   })
 
-  ipcMain.handle(IPC.OPEN_CHAT, async () => {
-    const status = await manager.getStatus()
-    if (status.webui.state === 'ready') {
-      openChatWindow()
-    } else {
-      throw new Error('WebUI is not running. Start the stack first.')
-    }
+  ipcMain.handle(IPC.ENTER_SHELL, async () => {
+    enterShellWindow()
   })
 }
 
@@ -60,7 +53,7 @@ export async function handleAppQuit(): Promise<boolean> {
     return true
   }
 
-  const win = getControlWindow()
+  const win = getMainWindow()
   const result = await dialog.showMessageBox(win ?? (undefined as unknown as BrowserWindow), {
     type: 'question',
     buttons: ['Stop stack and quit', 'Quit without stopping', 'Cancel'],
@@ -73,7 +66,6 @@ export async function handleAppQuit(): Promise<boolean> {
 
   if (result.response === 2) return false
   if (result.response === 0) {
-    closeChatWindow()
     await manager.stop()
   }
   return true

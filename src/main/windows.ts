@@ -1,11 +1,14 @@
-import { BrowserWindow, shell } from 'electron'
+import { BrowserWindow } from 'electron'
 import { is } from '@electron-toolkit/utils'
 import { join } from 'path'
-import { existsSync } from 'fs'
-import { env, WEBUI_URL } from '@shared/env'
+import { existsSync, readFileSync } from 'fs'
+import { homedir } from 'os'
+import { env } from '@shared/env'
 
-let controlWindow: BrowserWindow | null = null
-let chatWindow: BrowserWindow | null = null
+const ONBOARDING_SIZE = { width: 480, height: 640 }
+const SHELL_SIZE = { width: 1200, height: 800 }
+
+let mainWindow: BrowserWindow | null = null
 
 function getPreloadPath(): string {
   const js = join(__dirname, '../preload/index.js')
@@ -14,16 +17,39 @@ function getPreloadPath(): string {
   return mjs
 }
 
-export function createControlWindow(): BrowserWindow {
-  if (controlWindow && !controlWindow.isDestroyed()) {
-    controlWindow.focus()
-    return controlWindow
+function isAlreadyInitialized(): boolean {
+  try {
+    const configPath = join(
+      homedir(),
+      'Library',
+      'Application Support',
+      env.APP_NAME,
+      'config.json',
+    )
+    if (!existsSync(configPath)) return false
+    const raw = readFileSync(configPath, 'utf-8')
+    const cfg = JSON.parse(raw) as { initialized?: boolean }
+    return cfg.initialized === true
+  } catch {
+    return false
+  }
+}
+
+export function createMainWindow(): BrowserWindow {
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    mainWindow.focus()
+    return mainWindow
   }
 
-  controlWindow = new BrowserWindow({
-    width: 480,
-    height: 640,
-    resizable: false,
+  const shellMode = isAlreadyInitialized()
+  const size = shellMode ? SHELL_SIZE : ONBOARDING_SIZE
+
+  mainWindow = new BrowserWindow({
+    width: size.width,
+    height: size.height,
+    minWidth: shellMode ? 900 : undefined,
+    minHeight: shellMode ? 600 : undefined,
+    resizable: shellMode,
     show: false,
     title: env.APP_NAME,
     webPreferences: {
@@ -34,68 +60,42 @@ export function createControlWindow(): BrowserWindow {
     },
   })
 
-  controlWindow.webContents.on('preload-error', (_event, preloadPath, error) => {
+  mainWindow.webContents.on('preload-error', (_event, preloadPath, error) => {
     console.error(`Preload failed (${preloadPath}):`, error)
   })
 
-  controlWindow.webContents.on('did-fail-load', (_event, code, description, url) => {
+  mainWindow.webContents.on('did-fail-load', (_event, code, description, url) => {
     console.error(`Failed to load ${url}: [${code}] ${description}`)
   })
 
-  controlWindow.once('ready-to-show', () => {
-    controlWindow?.show()
+  mainWindow.once('ready-to-show', () => {
+    mainWindow?.show()
   })
 
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-    controlWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
+    mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
   } else {
-    controlWindow.loadFile(join(__dirname, '../renderer/index.html'))
+    mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
 
-  controlWindow.on('closed', () => {
-    controlWindow = null
+  mainWindow.on('closed', () => {
+    mainWindow = null
   })
 
-  return controlWindow
+  return mainWindow
 }
 
-export function openChatWindow(): BrowserWindow {
-  if (chatWindow && !chatWindow.isDestroyed()) {
-    chatWindow.focus()
-    return chatWindow
-  }
+/** Expand and unlock resize when entering the main app shell. */
+export function enterShellWindow(): void {
+  const win = getMainWindow()
+  if (!win || win.isDestroyed()) return
 
-  chatWindow = new BrowserWindow({
-    width: 1200,
-    height: 800,
-    title: `${env.APP_NAME} Chat`,
-    webPreferences: {
-      contextIsolation: true,
-      nodeIntegration: false,
-    },
-  })
-
-  chatWindow.loadURL(WEBUI_URL)
-
-  chatWindow.webContents.setWindowOpenHandler(({ url }) => {
-    shell.openExternal(url)
-    return { action: 'deny' }
-  })
-
-  chatWindow.on('closed', () => {
-    chatWindow = null
-  })
-
-  return chatWindow
+  win.setResizable(true)
+  win.setMinimumSize(900, 600)
+  win.setSize(SHELL_SIZE.width, SHELL_SIZE.height, true)
+  win.center()
 }
 
-export function closeChatWindow(): void {
-  if (chatWindow && !chatWindow.isDestroyed()) {
-    chatWindow.close()
-    chatWindow = null
-  }
-}
-
-export function getControlWindow(): BrowserWindow | null {
-  return controlWindow
+export function getMainWindow(): BrowserWindow | null {
+  return mainWindow
 }

@@ -1,7 +1,7 @@
 import { env } from '@shared/env'
 import { app, BrowserWindow } from 'electron'
 import { electronApp, optimizer } from '@electron-toolkit/utils'
-import { createControlWindow } from './windows'
+import { createMainWindow } from './windows'
 import {
   getComposeTemplatePath,
   handleAppQuit,
@@ -20,21 +20,21 @@ app.whenReady().then(() => {
   /** Регистрация IPC-хендлеров(INIT, START итд) */
   registerIpcHandlers(getComposeTemplatePath())
 
-  /** Создание стартового окна(окно управления) */
-  createControlWindow()
+  /** Создание главного окна */
+  createMainWindow()
 
-  /** Для macOS: если приложение закрыто, то открыть новое окно управления */
+  /** Для macOS: если окна нет — открыть снова */
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
-      createControlWindow()
+      createMainWindow()
     }
   })
 })
 
-/** 
- * Обработка закрытия всех окон 
+/**
+ * Обработка закрытия всех окон
  * Для всех кроме macOS: завершить приложение
-*/
+ */
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit()

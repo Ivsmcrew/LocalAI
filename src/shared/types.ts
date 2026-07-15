@@ -70,6 +70,13 @@ export type InitStepId =
   | 'smoke-test'
   | 'finalize'
 
+/** Прогресс загрузки модели Ollama */
+export interface ModelDownloadProgress {
+  completed: number
+  total: number
+  digest?: string
+}
+
 /** Индикатор прогресса инициализации приложения */
 export interface InitProgress {
   /** Шаг инициализации */
@@ -78,4 +85,6 @@ export interface InitProgress {
   percent: number
   /** Сообщение */
   message: string
+  /** Прогресс загрузки модели (байты) */
+  download?: ModelDownloadProgress
 }

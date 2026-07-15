@@ -97,14 +97,9 @@ export function useStack() {
     }
   }
 
-  const openChat = async () => {
-    setError(null)
-    try {
-      await window.api.openChat()
-    } catch (err) {
-      setError(err instanceof Error ? err.message : String(err))
-    }
-  }
+  const enterShell = useCallback(async () => {
+    await window.api.enterShell()
+  }, [])
 
   return {
     status,
@@ -115,7 +110,7 @@ export function useStack() {
     initialize,
     start,
     stop,
-    openChat,
+    enterShell,
     refreshStatus,
   }
 }

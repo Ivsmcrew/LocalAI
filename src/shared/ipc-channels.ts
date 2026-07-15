@@ -8,5 +8,5 @@ export const IPC = {
   STATUS: 'stack:status',
   LOG: 'stack:log',
   INIT_PROGRESS: 'stack:init-progress',
-  OPEN_CHAT: 'stack:open-chat',
+  ENTER_SHELL: 'window:enter-shell',
 } as const
