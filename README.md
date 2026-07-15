@@ -124,7 +124,7 @@ npm run preview
 }
 ```
 
-`electron-builder.config.ts` — packaging config (appId, productName from `.env` via `loadAppEnv`).
+`electron-builder.config.ts` — packaging config (appId, productName from `.env` via `dotenv`).
 
 ---
 
@@ -138,19 +138,17 @@ Copy `.env.example` to `.env` before development:
 cp .env.example .env
 ```
 
-- `.env` — values for app/stack defaults (not read at runtime in packaged `.app`)
-- `src/shared/env/schema.ts` — field definitions: type, and the single source of truth for the `AppEnv` type (derived from the schema)
-- `src/shared/env/load.ts` — generic parser driven by schema (used by build scripts; fails fast with a clear message if `.env` is missing or a required variable is absent)
-- `src/shared/env/index.ts` — `import { env } from '@shared/env'` in main and renderer
+- `.env` — values for app/stack defaults (not read at runtime in packaged `.app`). All variables use the `VITE_` prefix so electron-vite exposes them to every process via `import.meta.env`
+- `src/shared/env/env.d.ts` — augments `ImportMetaEnv` so `import.meta.env.*` keys are typed
+- `src/shared/env/index.ts` — single facade for main and renderer: `import { env, WEBUI_URL, OLLAMA_API_URL, OLLAMA_TAGS_URL } from '@shared/env'` (coerces `number`/`csv` and validates required vars at module load)
 
-Values are baked into the bundle at `npm run dev` / `npm run build`. User-specific settings (e.g. chosen model) live in `~/Library/Application Support/LocalAI/config.json`.
+Values are baked into the bundle at `npm run dev` / `npm run build` (electron-vite replaces `import.meta.env.*` statically). User-specific settings (e.g. chosen model) live in `~/Library/Application Support/LocalAI/config.json`.
 
 **Adding a new variable:**
 
-1. Add to `.env` and `.env.example`
-2. Add one line to `schema.ts` (`type: 'string' | 'number' | 'csv'`)
-
-The `AppEnv` TypeScript type is derived automatically from `schema.ts` — no need to maintain a separate types file.
+1. Add to `.env` and `.env.example` with the `VITE_` prefix
+2. Declare it in `src/shared/env/env.d.ts` (typed as `string`)
+3. Add the field to `AppEnv` in `src/shared/types.ts` and read it via `req()` / `num()` / `csv()`
 
 ---
 

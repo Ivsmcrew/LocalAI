@@ -1,6 +1,8 @@
-import { loadAppEnv } from './src/shared/env/load'
+import 'dotenv/config'
 
-const { APP_ID, APP_NAME } = loadAppEnv()
+/** Переменные окружения для electron-builder (запускается вне electron-vite, обычным Node) */
+const APP_ID = process.env.VITE_APP_ID
+const APP_NAME = process.env.VITE_APP_NAME
 
 /** Конфигурация сборки для Electron Builder */
 export default {
