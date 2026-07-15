@@ -2,6 +2,7 @@
   "name": "localai-desktop",
   "version": "1.0.0",
   "description": "Local AI chat desktop app — Ollama + Open WebUI",
+  "type": "module",
   "main": "./out/main/index.js",
   "author": {
     "name": "ivsmcrew",
