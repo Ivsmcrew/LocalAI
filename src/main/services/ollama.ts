@@ -7,6 +7,11 @@ import { env, OLLAMA_TAGS_URL } from '@shared/env'
 const execFileAsync = promisify(execFile)
 
 const OLLAMA_APP = '/Applications/Ollama.app'
+const OLLAMA_BIN_CANDIDATES = [
+  '/Applications/Ollama.app/Contents/Resources/ollama',
+  '/usr/local/bin/ollama',
+  '/opt/homebrew/bin/ollama',
+]
 
 export class OllamaService {
   private log: (line: string) => void
@@ -65,11 +70,24 @@ export class OllamaService {
 
   async pullModel(model: string): Promise<void> {
     this.log(`Pulling Ollama model: ${model}`)
-    await execFileAsync('ollama', ['pull', model], {
+    const bin = (await this.resolveBinary()) ?? 'ollama'
+    await execFileAsync(bin, ['pull', model], {
       maxBuffer: 10 * 1024 * 1024,
       timeout: 600_000,
     })
     this.log(`Model ${model} pulled successfully`)
+  }
+
+  private async resolveBinary(): Promise<string | null> {
+    for (const candidate of OLLAMA_BIN_CANDIDATES) {
+      try {
+        await access(candidate, constants.X_OK)
+        return candidate
+      } catch {
+        // try next
+      }
+    }
+    return null
   }
 
   async stop(): Promise<void> {

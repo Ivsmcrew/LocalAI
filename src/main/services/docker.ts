@@ -7,7 +7,17 @@ import { env } from '@shared/env'
 const execFileAsync = promisify(execFile)
 
 const DOCKER_APP = '/Applications/Docker.app'
-const DOCKER_BIN = '/Applications/Docker.app/Contents/Resources/bin/docker'
+const DOCKER_BIN_DIR = '/Applications/Docker.app/Contents/Resources/bin'
+const DOCKER_BIN = `${DOCKER_BIN_DIR}/docker`
+
+/** PATH с бинарниками Docker Desktop (credential helpers и т.п.). */
+function dockerEnv(): NodeJS.ProcessEnv {
+  const current = process.env.PATH ?? ''
+  if (current.split(':').includes(DOCKER_BIN_DIR)) {
+    return process.env
+  }
+  return { ...process.env, PATH: `${DOCKER_BIN_DIR}:${current}` }
+}
 
 export class DockerService {
   private log: (line: string) => void
@@ -27,11 +37,11 @@ export class DockerService {
 
   async isRunning(): Promise<boolean> {
     try {
-      await execFileAsync(DOCKER_BIN, ['info'], { timeout: 10_000 })
+      await execFileAsync(DOCKER_BIN, ['info'], { env: dockerEnv(), timeout: 10_000 })
       return true
     } catch {
       try {
-        await execFileAsync('docker', ['info'], { timeout: 10_000 })
+        await execFileAsync('docker', ['info'], { env: dockerEnv(), timeout: 10_000 })
         return true
       } catch {
         return false
@@ -67,6 +77,7 @@ export class DockerService {
     }
     const { stdout, stderr } = await execFileAsync(bin, args, {
       cwd,
+      env: dockerEnv(),
       maxBuffer: 10 * 1024 * 1024,
       timeout: 600_000,
     })
@@ -79,7 +90,7 @@ export class DockerService {
   runStreaming(args: string[], cwd: string): Promise<void> {
     return new Promise((resolve, reject) => {
       const bin = DOCKER_BIN
-      const child = spawn(bin, args, { cwd, shell: false })
+      const child = spawn(bin, args, { cwd, env: dockerEnv(), shell: false })
       attachOutput(child, this.log, resolve, reject)
     })
   }

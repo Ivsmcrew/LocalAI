@@ -1,5 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron'
-import { IPC } from '@shared/consts'
+import { IPC } from '@shared/ipc-channels'
 import type { InitProgress, StackStatus } from '@shared/types'
 
 export interface LocalAIApi {

@@ -161,3 +161,5 @@ Values are baked into the bundle at `npm run dev` / `npm run build` (electron-vi
 - `release/` — packaged `.app` / `.dmg` from `npm run package` (electron-builder)
 - `src/` — application source code
 
+### dev reset
+rm -rf ~/Library/Application\ Support/LocalAI
