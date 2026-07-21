@@ -4,6 +4,7 @@ import { electronApp, optimizer } from '@electron-toolkit/utils'
 import { createMainWindow } from './windows'
 import {
   getComposeTemplatePath,
+  getSearxngTemplateDir,
   handleAppQuit,
   registerIpcHandlers,
 } from './ipc-handlers'
@@ -18,7 +19,7 @@ app.whenReady().then(() => {
   })
 
   /** Регистрация IPC-хендлеров(INIT, START итд) */
-  registerIpcHandlers(getComposeTemplatePath())
+  registerIpcHandlers(getComposeTemplatePath(), getSearxngTemplateDir())
 
   /** Создание главного окна */
   createMainWindow()

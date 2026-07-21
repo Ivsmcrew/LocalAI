@@ -4,6 +4,7 @@ import { join } from 'path'
 import { existsSync, readFileSync } from 'fs'
 import { homedir } from 'os'
 import { env } from '@shared/env'
+import { destroyWebuiView } from './services/webui-view'
 
 const ONBOARDING_SIZE = { width: 480, height: 640 }
 const SHELL_SIZE = { width: 1200, height: 800 }
@@ -79,6 +80,7 @@ export function createMainWindow(): BrowserWindow {
   }
 
   mainWindow.on('closed', () => {
+    destroyWebuiView()
     mainWindow = null
   })
 

@@ -6,14 +6,45 @@ services:
       - "{{WEBUI_PORT}}:8080"
     environment:
       OLLAMA_BASE_URL: http://host.docker.internal:{{OLLAMA_PORT}}
-      # gemma2/llama and many small models reject Ollama's tools API — use legacy mode
-      DEFAULT_MODEL_PARAMS: '{"function_calling":"default"}'
-      DEFAULT_MODEL_METADATA: '{"capabilities":{"builtin_tools":false,"web_search":false,"code_interpreter":false,"image_generation":false}}'
+      # Open WebUI 0.10: non-legacy skips forced RAG search and expects native tools.
+      # Many local models reject Ollama tools — use legacy so the globe runs SearXNG RAG.
+      DEFAULT_MODEL_PARAMS: '{"function_calling":"legacy"}'
+      DEFAULT_MODEL_METADATA: '{"capabilities":{"builtin_tools":false,"web_search":true,"code_interpreter":false,"image_generation":false}}'
+      ENABLE_WEB_SEARCH: "true"
+      WEB_SEARCH_ENGINE: searxng
+      WEB_SEARCH_RESULT_COUNT: "3"
+      WEB_SEARCH_CONCURRENT_REQUESTS: "10"
+      SEARXNG_QUERY_URL: http://{{SEARXNG_CONTAINER_NAME}}:8080/search?q=<query>
     volumes:
       - "{{CONTAINER_NAME}}-data:/app/backend/data"
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    depends_on:
+      - {{SEARXNG_CONTAINER_NAME}}
     restart: unless-stopped
+
+  {{SEARXNG_CONTAINER_NAME}}:
+    image: {{SEARXNG_IMAGE}}
+    container_name: {{SEARXNG_CONTAINER_NAME}}
+    ports:
+      - "{{SEARXNG_PORT}}:8080"
+    volumes:
+      - ./searxng:/etc/searxng:rw
+    environment:
+      SEARXNG_BASE_URL: http://localhost:{{SEARXNG_PORT}}/
+    restart: unless-stopped
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETGID
+      - SETUID
+      - DAC_OVERRIDE
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+        max-file: "1"
 
 volumes:
   "{{CONTAINER_NAME}}-data":

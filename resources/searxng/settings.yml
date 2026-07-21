@@ -1,0 +1,15 @@
+# Minimal SearXNG config for Open WebUI (JSON API required).
+use_default_settings: true
+
+server:
+  # Local desktop stack — not a public instance.
+  secret_key: "localai-searxng-secret-key-change-me"
+  limiter: false
+  image_proxy: true
+  method: "GET"
+
+search:
+  safe_search: 0
+  formats:
+    - html
+    - json

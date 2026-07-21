@@ -17,6 +17,12 @@ export type AppEnv = {
   CONTAINER_NAME: string
   /** Имя Docker образа (Open WebUI) */
   DOCKER_IMAGE: string
+  /** Имя контейнера SearXNG */
+  SEARXNG_CONTAINER_NAME: string
+  /** Docker образ SearXNG */
+  SEARXNG_IMAGE: string
+  /** Порт SearXNG на хосте */
+  SEARXNG_PORT: number
   /** Модель по умолчанию */
   DEFAULT_MODEL: string
   /** Модели по умолчанию */
@@ -87,4 +93,12 @@ export interface InitProgress {
   message: string
   /** Прогресс загрузки модели (байты) */
   download?: ModelDownloadProgress
+}
+
+/** Bounds for the embedded Open WebUI view (CSS pixels). */
+export interface ViewBounds {
+  x: number
+  y: number
+  width: number
+  height: number
 }

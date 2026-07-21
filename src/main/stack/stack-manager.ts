@@ -59,7 +59,7 @@ export class StackManager {
     await new StackInitializer(this.deps, this.events).run(options)
   }
 
-  async start(): Promise<void> {
+  async start(options: Pick<InitOptions, 'composeTemplatePath' | 'searxngTemplateDir'>): Promise<void> {
     const cfg = await this.deps.config.readConfig()
     if (!cfg?.initialized) {
       throw new Error('Stack not initialized. Run Init first.')
@@ -69,11 +69,14 @@ export class StackManager {
     this.events.emitLog('Starting AI stack...')
 
     const { docker, ollama, webui, config } = this.deps
+    // Refresh compose + SearXNG config so existing installs pick up stack changes.
+    await config.setupComposeFile(options.composeTemplatePath, options.searxngTemplateDir)
     await docker.ensureRunning()
     await docker.composeUp(config.getUserDataPath())
     await ollama.start()
     await ollama.waitForReady()
     await webui.waitForReady()
+    await webui.ensureWebSearchConfig(docker)
 
     this.events.emitLog('Stack is ready')
   }

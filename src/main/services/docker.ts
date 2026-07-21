@@ -99,12 +99,10 @@ export class DockerService {
     await this.run(['compose', 'pull'], cwd)
   }
 
-  async composeUp(cwd: string, containerName = env.CONTAINER_NAME): Promise<void> {
-    if (await this.isContainerRunning(containerName, false)) {
-      this.log(`Container ${containerName} is already running`)
-      return
-    }
+  async composeUp(cwd: string): Promise<void> {
+    const containers = [env.CONTAINER_NAME, env.SEARXNG_CONTAINER_NAME]
 
+    // Always run `up -d` so compose/env changes recreate containers when needed.
     try {
       await this.run(['compose', 'up', '-d'], cwd)
     } catch (err) {
@@ -113,10 +111,17 @@ export class DockerService {
         message.includes('Conflict') || message.includes('already in use')
       if (!isNameConflict) throw err
 
-      this.log(`Removing conflicting container ${containerName}...`)
-      await this.run(['rm', '-f', containerName], '/')
+      this.log('Removing conflicting containers...')
+      for (const name of containers) {
+        await this.run(['rm', '-f', name], '/')
+      }
       await this.run(['compose', 'up', '-d'], cwd)
     }
+  }
+
+  /** Run a command inside a container; returns stdout. */
+  async exec(container: string, args: string[]): Promise<string> {
+    return this.run(['exec', container, ...args], '/', { quiet: true })
   }
 
   async composeStop(cwd: string): Promise<void> {

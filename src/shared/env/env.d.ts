@@ -15,6 +15,12 @@ interface ImportMetaEnv {
   readonly VITE_CONTAINER_NAME: string
   /** Имя Docker образа (Open WebUI) */
   readonly VITE_DOCKER_IMAGE: string
+  /** Имя контейнера SearXNG */
+  readonly VITE_SEARXNG_CONTAINER_NAME: string
+  /** Docker образ SearXNG */
+  readonly VITE_SEARXNG_IMAGE: string
+  /** Порт SearXNG на хосте */
+  readonly VITE_SEARXNG_PORT: string
   /** Модель по умолчанию */
   readonly VITE_DEFAULT_MODEL: string
   /** Модели по умолчанию */

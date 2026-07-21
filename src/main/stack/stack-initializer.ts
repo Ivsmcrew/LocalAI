@@ -9,7 +9,7 @@ export class StackInitializer {
   ) {}
 
   async run(options: InitOptions): Promise<void> {
-    const { defaultModel, composeTemplatePath } = options
+    const { defaultModel, composeTemplatePath, searxngTemplateDir } = options
     const { config, docker, ollama, webui } = this.deps
 
     // Step 1: Preflight
@@ -18,7 +18,7 @@ export class StackInitializer {
 
     // Step 2: Setup files
     this.events.emitProgress({ step: 'setup-files', percent: 15, message: 'Setting up configuration files...' })
-    const composePath = await config.setupComposeFile(composeTemplatePath)
+    const composePath = await config.setupComposeFile(composeTemplatePath, searxngTemplateDir)
     await config.writeConfig({
       initialized: false,
       defaultModel,
@@ -29,10 +29,10 @@ export class StackInitializer {
     const composeDir = config.getUserDataPath()
 
     // Step 3: Docker
-    this.events.emitProgress({ step: 'docker', percent: 30, message: 'Pulling Open WebUI image...' })
+    this.events.emitProgress({ step: 'docker', percent: 30, message: 'Pulling Open WebUI and SearXNG images...' })
     await docker.ensureRunning()
     await docker.composePull(composeDir)
-    this.events.emitProgress({ step: 'docker', percent: 50, message: 'Starting Open WebUI container...' })
+    this.events.emitProgress({ step: 'docker', percent: 50, message: 'Starting Open WebUI and SearXNG...' })
     await docker.composeUp(composeDir)
 
     // Step 4: Ollama
@@ -54,6 +54,7 @@ export class StackInitializer {
     // Step 5: Smoke test
     this.events.emitProgress({ step: 'smoke-test', percent: 85, message: 'Running smoke test...' })
     await webui.waitForReady()
+    await webui.ensureWebSearchConfig(docker)
     const hasModel = await ollama.hasModel(defaultModel)
     if (!hasModel) {
       throw new Error(`Smoke test failed: model ${defaultModel} not found in Ollama`)

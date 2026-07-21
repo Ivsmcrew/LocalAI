@@ -1,0 +1,9 @@
+# Relax bot detection for local Open WebUI → SearXNG calls.
+# See https://github.com/searxng/searxng/blob/master/searx/botdetection/limiter.toml
+
+[botdetection.ip_limit]
+link_token = false
+
+[botdetection.ip_lists]
+block_ip = []
+pass_ip = []

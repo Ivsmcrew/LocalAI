@@ -20,6 +20,10 @@ export default {
     {
       from: 'resources/docker-compose.template.yml',
       to: 'docker-compose.template.yml'
+    },
+    {
+      from: 'resources/searxng',
+      to: 'searxng'
     }
   ],
   files: ['out/**/*']

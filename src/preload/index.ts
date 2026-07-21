@@ -1,6 +1,6 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { IPC } from '@shared/ipc-channels'
-import type { InitProgress, StackStatus } from '@shared/types'
+import type { InitProgress, StackStatus, ViewBounds } from '@shared/types'
 
 export interface LocalAIApi {
   initialize: (defaultModel: string) => Promise<void>
@@ -8,6 +8,9 @@ export interface LocalAIApi {
   stop: () => Promise<void>
   getStatus: () => Promise<StackStatus>
   enterShell: () => Promise<void>
+  showWebuiView: (bounds: ViewBounds) => Promise<void>
+  hideWebuiView: () => Promise<void>
+  setWebuiViewBounds: (bounds: ViewBounds) => Promise<void>
   onLog: (cb: (line: string) => void) => () => void
   onInitProgress: (cb: (progress: InitProgress) => void) => () => void
 }
@@ -18,6 +21,9 @@ const api: LocalAIApi = {
   stop: () => ipcRenderer.invoke(IPC.STOP),
   getStatus: () => ipcRenderer.invoke(IPC.STATUS),
   enterShell: () => ipcRenderer.invoke(IPC.ENTER_SHELL),
+  showWebuiView: (bounds) => ipcRenderer.invoke(IPC.WEBUI_VIEW_SHOW, bounds),
+  hideWebuiView: () => ipcRenderer.invoke(IPC.WEBUI_VIEW_HIDE),
+  setWebuiViewBounds: (bounds) => ipcRenderer.invoke(IPC.WEBUI_VIEW_BOUNDS, bounds),
   onLog: (cb) => {
     const handler = (_: Electron.IpcRendererEvent, line: string) => cb(line)
     ipcRenderer.on(IPC.LOG, handler)

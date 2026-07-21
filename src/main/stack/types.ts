@@ -20,4 +20,5 @@ export interface ProgressEmitter {
 export interface InitOptions {
   defaultModel: string
   composeTemplatePath: string
+  searxngTemplateDir: string
 }
